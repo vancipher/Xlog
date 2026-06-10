@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Build / packaging
+build/
+dist/
+*.spec
+
+# Local data & databases
+*.db
+data/students.json
+data/sessions.json
+face_recognition/faces.json
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.png
+!app_icon.ico
+
+# Secrets
+.env

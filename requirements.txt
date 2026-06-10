@@ -1,0 +1,9 @@
+# Desktop app
+Pillow>=10.0.0
+
+# Optional — PN532 RFID on Raspberry Pi (install on Pi only)
+# adafruit-circuitpython-pn532
+# adafruit-blinka
+
+# Optional — serial devices
+# pyserial>=3.5

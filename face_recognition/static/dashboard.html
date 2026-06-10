@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance System</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Custom dark theme with blood-red accents */
+        body {
+            background-color: #000000;
+            color: #e5e5e5;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .blood-red {
+            color: #8b0000;
+        }
+        
+        .neon-red {
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+        }
+        
+        .bg-dark-card {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+        }
+        
+        .hover-blood:hover {
+            background-color: #8b0000;
+            color: #ffffff;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .neon-border {
+            border: 1px solid #8b0000;
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-in {
+            background-color: #064e3b;
+            color: #6ee7b7;
+        }
+        
+        .status-out {
+            background-color: #7f1d1d;
+            color: #fca5a5;
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #8b0000;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff0000;
+        }
+        
+        /* Table styling */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        thead th {
+            position: sticky;
+            top: 0;
+            background-color: #1a1a1a;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    
+    <!-- Header -->
+    <header class="mb-8">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">
+                    <span class="neon-red">Face Recognition</span>
+                    <span class="text-white">Attendance System</span>
+                </h1>
+                <p class="text-gray-400">Real-time student attendance tracking</p>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <span class="pulse-dot w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                    <span class="text-sm text-gray-400">Live</span>
+                </div>
+                <div class="text-sm text-gray-400" id="current-time">
+                    Loading...
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Total Present Today -->
+        <div class="bg-dark-card rounded-lg p-6 neon-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Present Today</p>
+                    <p class="text-3xl font-bold neon-red" id="stat-present">0</p>
+                </div>
+                <div class="text-5xl blood-red">👥</div>
+            </div>
+        </div>
+        
+        <!-- Checked In -->
+        <div class="bg-dark-card rounded-lg p-6 neon-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Checked In</p>
+                    <p class="text-3xl font-bold text-green-400" id="stat-in">0</p>
+                </div>
+                <div class="text-5xl">✅</div>
+            </div>
+        </div>
+        
+        <!-- Checked Out -->
+        <div class="bg-dark-card rounded-lg p-6 neon-border">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-400 text-sm mb-1">Checked Out</p>
+                    <p class="text-3xl font-bold text-red-400" id="stat-out">0</p>
+                </div>
+                <div class="text-5xl">🚪</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Attendance Table -->
+    <div class="bg-dark-card rounded-lg neon-border overflow-hidden">
+        <div class="p-6 border-b border-gray-800">
+            <h2 class="text-2xl font-bold flex items-center">
+                <span class="neon-red mr-2">📋</span>
+                Today's Attendance
+                <span class="ml-auto text-sm text-gray-400" id="last-updated">
+                    Last updated: Never
+                </span>
+            </h2>
+        </div>
+        
+        <div class="overflow-x-auto" style="max-height: 500px; overflow-y: auto;">
+            <table class="w-full">
+                <thead>
+                    <tr class="text-left bg-black">
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Student Name
+                        </th>
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Student ID
+                        </th>
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Date
+                        </th>
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Time In
+                        </th>
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Time Out
+                        </th>
+                        <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase tracking-wider">
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-table-body">
+                    <!-- Data will be populated by JavaScript -->
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <div class="text-6xl mb-4">⏳</div>
+                            Loading attendance data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="mt-8 text-center text-gray-600 text-sm">
+        <p>Auto-refreshing every 10 seconds | Built with Flask + TailwindCSS</p>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const REFRESH_INTERVAL = 10000; // 10 seconds
+        
+        // DOM Elements
+        const statPresent = document.getElementById('stat-present');
+        const statIn = document.getElementById('stat-in');
+        const statOut = document.getElementById('stat-out');
+        const tableBody = document.getElementById('attendance-table-body');
+        const lastUpdated = document.getElementById('last-updated');
+        const currentTime = document.getElementById('current-time');
+        
+        // Update current time
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            currentTime.textContent = `${dateString} • ${timeString}`;
+        }
+        
+        // Fetch today's attendance
+        async function fetchAttendance() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/attendance/today`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch attendance');
+                }
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateStats(data.records);
+                    updateTable(data.records);
+                    updateLastUpdated();
+                } else {
+                    showError(data.error || 'Unknown error');
+                }
+                
+            } catch (error) {
+                console.error('Error fetching attendance:', error);
+                showError('Unable to connect to server. Make sure the Flask server is running.');
+            }
+        }
+        
+        // Update statistics
+        function updateStats(records) {
+            const totalPresent = records.length;
+            const checkedOut = records.filter(r => r.time_out !== 'Not checked out').length;
+            const checkedIn = totalPresent - checkedOut;
+            
+            statPresent.textContent = totalPresent;
+            statIn.textContent = checkedIn;
+            statOut.textContent = checkedOut;
+        }
+        
+        // Update table
+        function updateTable(records) {
+            if (records.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <div class="text-6xl mb-4">📭</div>
+                            <p class="text-xl">No attendance records for today</p>
+                            <p class="text-sm mt-2">Records will appear here when students check in</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            const rows = records.map(record => {
+                const isCheckedOut = record.time_out !== 'Not checked out';
+                const statusClass = isCheckedOut ? 'status-out' : 'status-in';
+                const statusText = isCheckedOut ? 'Checked Out' : 'Checked In';
+                
+                return `
+                    <tr class="border-b border-gray-800 hover:bg-gray-900 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-white">${escapeHtml(record.student_name)}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <code class="text-sm text-gray-400 bg-gray-900 px-2 py-1 rounded">
+                                ${escapeHtml(record.student_id)}
+                            </code>
+                        </td>
+                        <td class="px-6 py-4 text-gray-300">
+                            ${escapeHtml(record.date)}
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="text-green-400 font-mono">
+                                ${escapeHtml(record.time_in || 'N/A')}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="font-mono ${isCheckedOut ? 'text-red-400' : 'text-gray-600'}">
+                                ${escapeHtml(record.time_out)}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="status-badge ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tableBody.innerHTML = rows;
+        }
+        
+        // Update last updated timestamp
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            lastUpdated.textContent = `Last updated: ${timeString}`;
+        }
+        
+        // Show error message
+        function showError(message) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center">
+                        <div class="text-6xl mb-4">⚠️</div>
+                        <p class="text-xl text-red-400 mb-2">Error</p>
+                        <p class="text-sm text-gray-400">${escapeHtml(message)}</p>
+                    </td>
+                </tr>
+            `;
+        }
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize
+        updateCurrentTime();
+        fetchAttendance();
+        
+        // Set up refresh intervals
+        setInterval(updateCurrentTime, 1000);
+        setInterval(fetchAttendance, REFRESH_INTERVAL);
+        
+        // Log to console
+        console.log('%c🔴 Face Recognition Attendance System', 'color: #ff0000; font-size: 20px; font-weight: bold;');
+        console.log(`Fetching data from: ${API_BASE_URL}`);
+        console.log(`Auto-refresh interval: ${REFRESH_INTERVAL / 1000} seconds`);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Recognition Attendance System - Control Panel</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        body {
+            background-color: #000000;
+            color: #e5e5e5;
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .blood-red { color: #8b0000; }
+        .neon-red { color: #ff0000; text-shadow: 0 0 10px #ff0000; }
+        
+        .bg-dark-card {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+        }
+        
+        .btn-primary {
+            background-color: #8b0000;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 2px solid #8b0000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #ff0000;
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: #8b0000;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 2px solid #8b0000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            background-color: #8b0000;
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background-color: #0a0a0a;
+            border: 2px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e5e5e5;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #8b0000;
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .btn-danger {
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 2px solid #dc2626;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .btn-danger:hover {
+            background-color: #ff0000;
+            border-color: #ff0000;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+        }
+        
+        .neon-border {
+            border: 1px solid #8b0000;
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-in { background-color: #064e3b; color: #6ee7b7; }
+        .status-out { background-color: #7f1d1d; color: #fca5a5; }
+        
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #8b0000; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff0000; }
+        
+        table { border-collapse: separate; border-spacing: 0; }
+        thead th { position: sticky; top: 0; background-color: #1a1a1a; z-index: 10; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 30px;
+            border: 2px solid #8b0000;
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.7);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            background-color: #0a0a0a;
+            border: 2px solid #2a2a2a;
+            border-radius: 8px;
+            color: #e5e5e5;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #8b0000;
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a2a2a;
+        }
+        
+        .nav-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        
+        .nav-tab.active {
+            color: #ff0000;
+            border-bottom-color: #8b0000;
+        }
+        
+        .nav-tab:hover {
+            color: #8b0000;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6">
+    
+    <!-- Header -->
+    <header class="mb-8">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">
+                    <span class="neon-red">Face Recognition</span>
+                    <span class="text-white">Attendance System</span>
+                </h1>
+                <p class="text-gray-400">Control Panel & Live Dashboard</p>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center">
+                    <span class="pulse-dot w-3 h-3 bg-red-600 rounded-full mr-2"></span>
+                    <span class="text-sm text-gray-400">Live</span>
+                </div>
+                <div class="text-sm text-gray-400" id="current-time">Loading...</div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="nav-tab" onclick="switchTab('control')">Control Panel</button>
+        <button class="nav-tab" onclick="switchTab('sessions')">Sessions</button>
+        <button class="nav-tab" onclick="switchTab('database')">Database</button>
+    </div>
+    
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Present Today</p>
+                        <p class="text-3xl font-bold neon-red" id="stat-present">0</p>
+                    </div>
+                    <div class="text-5xl blood-red">[#]</div>
+                </div>
+            </div>
+            
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Checked In</p>
+                        <p class="text-3xl font-bold text-green-400" id="stat-in">0</p>
+                    </div>
+                    <div class="text-5xl">[+]</div>
+                </div>
+            </div>
+            
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-400 text-sm mb-1">Checked Out</p>
+                        <p class="text-3xl font-bold text-red-400" id="stat-out">0</p>
+                    </div>
+                    <div class="text-5xl">[-]</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Attendance Table -->
+        <div class="bg-dark-card rounded-lg neon-border overflow-hidden">
+            <div class="p-6 border-b border-gray-800">
+                <h2 class="text-2xl font-bold flex items-center justify-between">
+                    <span><span class="neon-red">[*]</span> Today's Attendance</span>
+                    <span class="text-sm text-gray-400" id="last-updated">Last updated: Never</span>
+                </h2>
+            </div>
+            
+            <div class="overflow-x-auto" style="max-height: 500px; overflow-y: auto;">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left bg-black">
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Student Name</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Student ID</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Date</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Time In</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Time Out</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Session</th>
+                            <th class="px-6 py-4 text-sm font-semibold text-gray-300 uppercase">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendance-table-body">
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <div class="text-6xl mb-4">[...]</div>
+                                Loading attendance data...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Control Panel Tab -->
+    <div id="control-tab" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Register New Student Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 neon-red">[+] Register New Student</h3>
+                <p class="text-gray-400 mb-4">Capture face embeddings and register a new student in the system.</p>
+                <button class="btn-primary w-full" onclick="openRegisterModal()" id="register-btn">
+                    Register Student
+                </button>
+            </div>
+            
+            <!-- Start Recognition Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 neon-red">[*] Live Recognition</h3>
+                <p class="text-gray-400 mb-4">Start live face recognition and automatic attendance recording.</p>
+                <div class="mb-4">
+                    <label class="block text-gray-400 text-sm mb-2">Select Session (class)</label>
+                    <div class="flex gap-2">
+                        <select id="recognition-session" class="input-field"></select>
+                        <button class="btn-secondary" onclick="loadSessionsSelect()">Refresh</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Required: pick the session to attribute attendance.</p>
+                </div>
+                <button class="btn-primary w-full" onclick="toggleRecognition()" id="recognition-btn">
+                    Start Recognition
+                </button>
+                <div id="recognition-status" class="mt-4 text-sm text-gray-400"></div>
+            </div>
+            
+            <!-- Test System Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 text-green-400">[!] Test System</h3>
+                <p class="text-gray-400 mb-4">Run automated tests to verify system functionality.</p>
+                <button class="btn-secondary w-full" onclick="runSystemTest()" id="test-btn">
+                    Run Tests
+                </button>
+                <div id="test-results" class="mt-4 text-sm text-gray-400"></div>
+            </div>
+            
+            <!-- Export Data Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 text-blue-400">[>] Export Data</h3>
+                <p class="text-gray-400 mb-4">Export attendance records to CSV format.</p>
+                <button class="btn-secondary w-full" onclick="exportAttendance()">
+                    Export to CSV
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sessions Tab -->
+    <div id="sessions-tab" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 neon-red">[+] Create Session</h3>
+                <p class="text-gray-400 mb-4 text-sm">Name a lecture window; check-ins during it are stored as a distinct session.</p>
+                <div class="space-y-3">
+                    <input id="session-name" class="input-field" placeholder="Session name (optional e.g., Math 101)" />
+                    <input id="session-date" type="date" class="input-field" />
+                    <div class="grid grid-cols-2 gap-3">
+                        <input id="session-start" type="time" class="input-field" />
+                        <input id="session-end" type="time" class="input-field" />
+                    </div>
+                    <button class="btn-primary w-full" onclick="createSession()">Create Session</button>
+                    <div id="session-create-status" class="text-sm text-gray-400"></div>
+                </div>
+            </div>
+
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold neon-red">[#] Sessions List</h3>
+                    <button class="btn-secondary text-sm" onclick="loadSessions()">Refresh</button>
+                </div>
+                <div id="sessions-list" class="text-sm text-gray-300 space-y-2">
+                    <p class="text-gray-500">Click refresh to load sessions.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Database Tab -->
+    <div id="database-tab" class="tab-content">
+        <div class="bg-dark-card rounded-lg p-6 neon-border mb-6">
+            <h3 class="text-xl font-bold mb-4 neon-red">[#] Students Database</h3>
+            <button class="btn-secondary mb-4" onclick="loadStudentsList()">[>] Refresh Students List</button>
+            <div id="students-list" class="mt-4">
+                <p class="text-gray-400">Click refresh to load students...</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Delete Student Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 text-yellow-400">[X] Delete Student</h3>
+                <p class="text-gray-400 mb-4 text-sm">Remove a specific student and their attendance records.</p>
+                <button class="btn-secondary w-full" onclick="openDeleteStudentModal()">
+                    Delete Student
+                </button>
+            </div>
+            
+            <!-- Clear Attendance Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 text-orange-400">[!] Clear Attendance</h3>
+                <p class="text-gray-400 mb-4 text-sm">Delete all attendance records (keeps students).</p>
+                <button class="btn-danger w-full" onclick="clearAttendance()">
+                    Clear Attendance
+                </button>
+            </div>
+            
+            <!-- Reset Database Card -->
+            <div class="bg-dark-card rounded-lg p-6 neon-border">
+                <h3 class="text-xl font-bold mb-4 text-red-400">[!!] Reset Database</h3>
+                <p class="text-gray-400 mb-4 text-sm">Delete ALL data and start fresh.</p>
+                <button class="btn-danger w-full" onclick="resetDatabase()">
+                    Reset Database
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Register Student Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4 neon-red">[+] Register New Student</h2>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2">Student ID</label>
+                <input type="text" id="student-id" class="input-field" placeholder="e.g., STU001" required>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-gray-400 mb-2">Student Name</label>
+                <input type="text" id="student-name" class="input-field" placeholder="e.g., John Doe" required>
+            </div>
+            
+            <div id="camera-container" class="mb-6 hidden">
+                <p class="text-gray-400 mb-2">Position face in camera:</p>
+                <img id="camera-feed" src="" alt="Camera Feed" style="width: 100%; max-width: 640px; border: 2px solid #8b0000; border-radius: 8px;">
+                <div id="capture-status" class="mt-4 text-center">
+                    <p class="text-lg font-bold text-green-400">Ready to capture</p>
+                    <p class="text-sm text-gray-400">Embeddings captured: <span id="capture-count">0</span>/5</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button class="btn-primary flex-1" onclick="startRegistration()" id="start-register-btn">
+                    Start Capture
+                </button>
+                <button class="btn-secondary flex-1" onclick="closeRegisterModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Student Modal -->
+    <div id="delete-student-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4 text-yellow-400">[X] Delete Student</h2>
+            
+            <div class="mb-4">
+                <label class="block text-gray-400 mb-2">Student ID</label>
+                <input type="text" id="delete-student-id" class="input-field" placeholder="e.g., STU001" required>
+            </div>
+            
+            <div class="flex gap-4">
+                <button class="btn-danger flex-1" onclick="confirmDeleteStudent()">
+                    Delete Student
+                </button>
+                <button class="btn-secondary flex-1" onclick="closeModal('delete-student-modal')">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Modal -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4 neon-red" id="message-title">Information</h2>
+            <p class="text-gray-300 mb-6" id="message-body">Message body</p>
+            <button class="btn-primary w-full" onclick="closeModal('message-modal')">
+                Close
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+        const REFRESH_INTERVAL = 10000;
+        
+        let recognitionActive = false;
+        let registrationCheckInterval = null;
+        let recognitionCheckInterval = null;
+        
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            if (tabName === 'sessions') {
+                primeSessionDefaults();
+                loadSessions();
+            }
+        }
+        
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function openRegisterModal() {
+            document.getElementById('student-id').value = '';
+            document.getElementById('student-name').value = '';
+            document.getElementById('camera-container').classList.add('hidden');
+            document.getElementById('start-register-btn').disabled = false;
+            openModal('register-modal');
+        }
+        
+        function closeRegisterModal() {
+            if (registrationCheckInterval) {
+                clearInterval(registrationCheckInterval);
+                fetch(`${API_BASE_URL}/register/cancel`, { method: 'POST' });
+            }
+            closeModal('register-modal');
+        }
+        
+        function openDeleteStudentModal() {
+            openModal('delete-student-modal');
+        }
+        
+        function showMessage(title, message) {
+            document.getElementById('message-title').textContent = title;
+            document.getElementById('message-body').textContent = message;
+            openModal('message-modal');
+        }
+        
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+        
+        // Registration functions
+        async function startRegistration() {
+            const studentId = document.getElementById('student-id').value.trim();
+            const studentName = document.getElementById('student-name').value.trim();
+            
+            if (!studentId || !studentName) {
+                alert('Please enter both Student ID and Name');
+                return;
+            }
+            
+            try {
+                document.getElementById('start-register-btn').disabled = true;
+                
+                const response = await fetch(`${API_BASE_URL}/register/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student_id: studentId, student_name: studentName })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show camera feed
+                    document.getElementById('camera-container').classList.remove('hidden');
+                    document.getElementById('camera-feed').src = `${API_BASE_URL}/camera/stream?t=${Date.now()}`;
+                    
+                    // Start checking registration status
+                    registrationCheckInterval = setInterval(checkRegistrationStatus, 500);
+                } else {
+                    alert('Failed to start registration: ' + data.error);
+                    document.getElementById('start-register-btn').disabled = false;
+                }
+            } catch (error) {
+                alert('Error starting registration: ' + error.message);
+                document.getElementById('start-register-btn').disabled = false;
+            }
+        }
+        
+        async function checkRegistrationStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/register/status`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('capture-count').textContent = data.captured;
+                    
+                    if (!data.active) {
+                        clearInterval(registrationCheckInterval);
+                        
+                        if (data.status === 'completed') {
+                            showMessage('Success', data.message + ' You can now close this window.');
+                            setTimeout(() => closeRegisterModal(), 2000);
+                            fetchAttendance(); // Refresh the dashboard
+                        } else if (data.status === 'error') {
+                            alert('Registration failed: ' + data.message);
+                            document.getElementById('start-register-btn').disabled = false;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking status:', error);
+            }
+        }
+        
+        // Recognition functions
+        async function toggleRecognition() {
+            const btn = document.getElementById('recognition-btn');
+            const status = document.getElementById('recognition-status');
+            const sessionSelect = document.getElementById('recognition-session');
+            const sessionId = sessionSelect.value ? Number(sessionSelect.value) : null;
+            if (!recognitionActive && !sessionId) {
+                alert('Please select a session before starting recognition.');
+                return;
+            }
+            
+            if (!recognitionActive) {
+                try {
+                    btn.disabled = true;
+                    status.textContent = 'Starting recognition...';
+                    
+                    const response = await fetch(`${API_BASE_URL}/recognition/start`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ session_id: sessionId })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        recognitionActive = true;
+                        btn.textContent = 'Stop Recognition';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-danger');
+                        status.textContent = 'Recognition active | ' + data.students_count + ' students loaded';
+                        
+                        recognitionCheckInterval = setInterval(checkRecognitionStatus, 2000);
+                    } else {
+                        alert('Failed to start recognition: ' + data.error);
+                        status.textContent = '';
+                    }
+                    
+                    btn.disabled = false;
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    status.textContent = '';
+                    btn.disabled = false;
+                }
+            } else {
+                try {
+                    btn.disabled = true;
+                    
+                    const response = await fetch(`${API_BASE_URL}/recognition/stop`, {
+                        method: 'POST'
+                    });
+                    
+                    recognitionActive = false;
+                    btn.textContent = 'Start Recognition';
+                    btn.classList.remove('btn-danger');
+                    btn.classList.add('btn-primary');
+                    status.textContent = '';
+                    
+                    if (recognitionCheckInterval) {
+                        clearInterval(recognitionCheckInterval);
+                    }
+                    
+                    btn.disabled = false;
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                    btn.disabled = false;
+                }
+            }
+        }
+        
+        async function checkRecognitionStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/recognition/status`);
+                const data = await response.json();
+                
+                if (data.success && data.last_recognized && data.last_recognized.name) {
+                    const last = data.last_recognized;
+                    document.getElementById('recognition-status').innerHTML = 
+                        `Last recognized: <span class="text-green-400">${escapeHtml(last.name)}</span> at ${escapeHtml(last.time)}<br><span class="text-xs">${escapeHtml(last.message)}</span>`;
+                    
+                    // Refresh attendance table
+                    fetchAttendance();
+                    primeSessionDefaults();
+                }
+            } catch (error) {
+                console.error('Error checking recognition:', error);
+            }
+        }
+        
+        // Update current time
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { 
+                hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            const dateString = now.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+            });
+            document.getElementById('current-time').textContent = `${dateString} | ${timeString}`;
+        }
+        
+        // Fetch attendance
+        async function fetchAttendance() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/attendance/today`);
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const data = await response.json();
+                if (data.success) {
+                    updateStats(data.records);
+                    updateTable(data.records);
+                    updateLastUpdated();
+                } else {
+                    showError(data.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Unable to connect to server. Make sure Flask is running.');
+            }
+        }
+        
+        // Update stats
+        function updateStats(records) {
+            const totalPresent = records.length;
+            const checkedOut = records.filter(r => r.time_out !== 'Not checked out').length;
+            const checkedIn = totalPresent - checkedOut;
+            
+            document.getElementById('stat-present').textContent = totalPresent;
+            document.getElementById('stat-in').textContent = checkedIn;
+            document.getElementById('stat-out').textContent = checkedOut;
+        }
+        
+        // Update table
+        function updateTable(records) {
+            const tbody = document.getElementById('attendance-table-body');
+            
+            if (records.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <div class="text-6xl mb-4">[!]</div>
+                            <p class="text-xl">No attendance records for today</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Group by session
+            const groups = {};
+            records.forEach(r => {
+                const key = r.session_id || 'none';
+                if (!groups[key]) groups[key] = { meta: r, items: [] };
+                groups[key].items.push(r);
+            });
+
+            const sections = Object.values(groups).map(group => {
+                const sample = group.meta;
+                const sessionLabel = sample.session_name || (sample.session_id ? `Session #${sample.session_id}` : 'No session');
+                const sessionTime = sample.session_start && sample.session_end ? `${sample.session_start}-${sample.session_end}` : '';
+                const title = sessionTime ? `${sessionLabel} (${sessionTime})` : sessionLabel;
+
+                const rows = group.items.map(record => {
+                    const isCheckedOut = record.time_out !== 'Not checked out';
+                    const statusClass = isCheckedOut ? 'status-out' : 'status-in';
+                    const statusText = isCheckedOut ? 'Checked Out' : 'Checked In';
+                    const sessionDisplay = title;
+                    return `
+                        <tr class="border-b border-gray-800 hover:bg-gray-900">
+                            <td class="px-6 py-4"><div class="font-semibold text-white">${escapeHtml(record.student_name)}</div></td>
+                            <td class="px-6 py-4"><code class="text-sm text-gray-400 bg-gray-900 px-2 py-1 rounded">${escapeHtml(record.student_id)}</code></td>
+                            <td class="px-6 py-4 text-gray-300">${escapeHtml(record.date)}</td>
+                            <td class="px-6 py-4"><span class="text-green-400 font-mono">${escapeHtml(record.time_in || 'N/A')}</span></td>
+                            <td class="px-6 py-4"><span class="font-mono ${isCheckedOut ? 'text-red-400' : 'text-gray-600'}">${escapeHtml(record.time_out)}</span></td>
+                            <td class="px-6 py-4 text-gray-300">${escapeHtml(sessionDisplay)}</td>
+                            <td class="px-6 py-4"><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                return `
+                    <tr class="bg-black/60">
+                        <td colspan="7" class="px-6 py-3 text-sm text-gray-400 uppercase tracking-wide">${escapeHtml(title)}</td>
+                    </tr>
+                    ${rows}
+                `;
+            }).join('');
+
+            tbody.innerHTML = sections;
+        }
+        
+        function updateLastUpdated() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('last-updated').textContent = `Last updated: ${timeString}`;
+        }
+        
+        function showError(message) {
+            const tbody = document.getElementById('attendance-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center">
+                        <div class="text-6xl mb-4 text-red-400">[X]</div>
+                        <p class="text-xl text-red-400 mb-2">Error</p>
+                        <p class="text-sm text-gray-400">${escapeHtml(message)}</p>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Load sessions into recognition select
+        async function loadSessionsSelect() {
+            const sel = document.getElementById('recognition-session');
+            sel.innerHTML = '<option value="">Loading...</option>';
+            try {
+                const resp = await fetch(`${API_BASE_URL}/sessions`);
+                const data = await resp.json();
+                if (data.success) {
+                    if (!data.sessions.length) {
+                        sel.innerHTML = '<option value="">No sessions found</option>';
+                        return;
+                    }
+                    sel.innerHTML = '<option value="">-- Select session --</option>' + data.sessions.map(s => {
+                        const label = s.session_name || `Session #${s.id}`;
+                        return `<option value="${s.id}">${escapeHtml(label)} | ${escapeHtml(s.session_date)} ${escapeHtml(s.start_time)}-${escapeHtml(s.end_time)}</option>`;
+                    }).join('');
+                } else {
+                    sel.innerHTML = '<option value="">Load failed</option>';
+                }
+            } catch (err) {
+                sel.innerHTML = '<option value="">Error loading</option>';
+            }
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Sessions helpers
+        function primeSessionDefaults() {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            document.getElementById('session-date').value = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('session-start').value = '08:00';
+            document.getElementById('session-end').value = '09:30';
+        }
+
+        async function createSession() {
+            const name = document.getElementById('session-name').value.trim();
+            const dateVal = document.getElementById('session-date').value;
+            const startVal = document.getElementById('session-start').value;
+            const endVal = document.getElementById('session-end').value;
+            const statusEl = document.getElementById('session-create-status');
+            statusEl.textContent = 'Creating session...';
+
+            try {
+                const resp = await fetch(`${API_BASE_URL}/sessions`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ session_name: name, session_date: dateVal, start_time: startVal, end_time: endVal })
+                });
+                const data = await resp.json();
+                if (data.success) {
+                    statusEl.textContent = `Created session #${data.session_id || ''}`;
+                    loadSessions();
+                } else {
+                    statusEl.textContent = data.message || 'Failed to create session';
+                }
+            } catch (err) {
+                statusEl.textContent = 'Error creating session';
+            }
+        }
+
+        async function loadSessions() {
+            const listEl = document.getElementById('sessions-list');
+            listEl.innerHTML = '<p class="text-gray-400">Loading sessions...</p>';
+            try {
+                const resp = await fetch(`${API_BASE_URL}/sessions`);
+                const data = await resp.json();
+                if (data.success) {
+                    if (!data.sessions.length) {
+                        listEl.innerHTML = '<p class="text-gray-500">No sessions yet. Create one above.</p>';
+                        return;
+                    }
+                    const rows = data.sessions.map(s => {
+                        const label = s.session_name || `Session #${s.id}`;
+                        return `<div class="p-3 bg-black/40 rounded border border-gray-800">
+                            <div class="flex items-center justify-between">
+                                <span class="font-semibold text-white">${escapeHtml(label)}</span>
+                                <span class="text-xs text-gray-400">${escapeHtml(s.session_date)}</span>
+                            </div>
+                            <div class="text-xs text-gray-400">${escapeHtml(s.start_time)} - ${escapeHtml(s.end_time)}</div>
+                        </div>`;
+                    }).join('');
+                    listEl.innerHTML = rows;
+                } else {
+                    listEl.innerHTML = `<p class="text-red-400">${escapeHtml(data.error || 'Failed to load sessions')}</p>`;
+                }
+            } catch (err) {
+                listEl.innerHTML = '<p class="text-red-400">Error loading sessions</p>';
+            }
+        }
+        
+        // Load students list
+        async function loadStudentsList() {
+            const container = document.getElementById('students-list');
+            container.innerHTML = '<p class=\"text-gray-400\">Loading...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/db/students`);
+                const data = await response.json();
+                
+                if (data.success && data.students.length > 0) {
+                    let html = '<div class=\"overflow-x-auto\"><table class=\"w-full text-sm\">';
+                    html += '<thead><tr class=\"border-b border-gray-700\">';
+                    html += '<th class=\"text-left py-2 px-3\">Student ID</th>';
+                    html += '<th class=\"text-left py-2 px-3\">Name</th>';
+                    html += '<th class=\"text-left py-2 px-3\">Registered</th>';
+                    html += '</tr></thead><tbody>';
+                    
+                    data.students.forEach(student => {
+                        const date = student.created_at ? student.created_at.split(' ')[0] : 'N/A';
+                        html += `<tr class=\"border-b border-gray-800\">`;
+                        html += `<td class=\"py-2 px-3\"><code class=\"text-gray-400\">${escapeHtml(student.id)}</code></td>`;
+                        html += `<td class=\"py-2 px-3 text-white\">${escapeHtml(student.name)}</td>`;
+                        html += `<td class=\"py-2 px-3 text-gray-400\">${date}</td>`;
+                        html += `</tr>`;
+                    });
+                    
+                    html += '</tbody></table></div>';
+                    html += `<p class=\"text-gray-400 mt-4\">Total: ${data.count} student(s)</p>`;
+                    container.innerHTML = html;
+                } else {
+                    container.innerHTML = '<p class=\"text-gray-400\">No students found.</p>';
+                }
+            } catch (error) {
+                container.innerHTML = '<p class=\"text-red-400\">Error loading students: ' + error.message + '</p>';
+            }
+        }
+        
+        // Delete student
+        async function confirmDeleteStudent() {
+            const studentId = document.getElementById('delete-student-id').value.trim();
+            
+            if (!studentId) {
+                alert('Please enter a Student ID');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to delete student '${studentId}' and all their attendance records?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/db/student/${encodeURIComponent(studentId)}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Success', data.message);
+                    closeModal('delete-student-modal');
+                    loadStudentsList(); // Refresh list
+                    fetchAttendance(); // Refresh attendance
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error deleting student: ' + error.message);
+            }
+        }
+        
+        // Clear attendance
+        async function clearAttendance() {
+            if (!confirm('Are you sure you want to delete ALL attendance records? Students will be kept. This cannot be undone!')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/db/attendance/clear`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Success', data.message);
+                    fetchAttendance(); // Refresh attendance table
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error clearing attendance: ' + error.message);
+            }
+        }
+        
+        // Reset database
+        async function resetDatabase() {
+            if (!confirm('[!!] WARNING: This will DELETE ALL students and attendance records! This cannot be undone!')) {
+                return;
+            }
+            
+            if (!confirm('Are you ABSOLUTELY sure? Type YES in the next prompt to confirm.')) {
+                return;
+            }
+            
+            const confirmation = prompt('Type YES to confirm database reset:');
+            if (confirmation !== 'YES') {
+                alert('Database reset cancelled.');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/db/reset`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Database Reset', `${data.message}\\n\\nStudents deleted: ${data.students_deleted}\\nAttendance deleted: ${data.attendance_deleted}`);
+                    loadStudentsList(); // Refresh list
+                    fetchAttendance(); // Refresh attendance
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error resetting database: ' + error.message);
+            }
+        }
+        
+        // Run system test
+        async function runSystemTest() {
+            const btn = document.getElementById('test-btn');
+            const resultsDiv = document.getElementById('test-results');
+            
+            btn.disabled = true;
+            resultsDiv.innerHTML = '<p class=\"text-yellow-400\">Running tests...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/test/system`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const r = data.results;
+                    let html = '<div class="text-xs mt-2">';
+                    html += `<p>[+] Health: ${r.health ? 'OK' : 'Failed'}</p>`;
+                    html += `<p>[+] Database: ${r.database ? 'OK' : 'Failed'}</p>`;
+                    html += `<p>[#] Students: ${r.students_count}</p>`;
+                    html += `<p>[*] Attendance: ${r.attendance_count}</p>`;
+                    html += `<p>[>] Camera: ${r.camera ? 'Available' : 'Not available'}</p>`;
+                    html += '</div>';
+                    resultsDiv.innerHTML = html;
+                    showMessage('System Test', 'All tests passed! System is operational.');
+                } else {
+                    resultsDiv.innerHTML = '<p class=\"text-red-400\">Tests failed</p>';
+                    showMessage('System Test Failed', data.error || 'Some tests failed');
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = '<p class=\"text-red-400\">Error running tests</p>';
+                alert('Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+        
+        // Export attendance
+        async function exportAttendance() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/attendance/all`);
+                const data = await response.json();
+                
+                if (data.success && data.records.length > 0) {
+                    const csv = convertToCSV(data.records);
+                    downloadCSV(csv, 'attendance_export.csv');
+                    showMessage('Export Success', `Exported ${data.records.length} records to CSV file.`);
+                } else {
+                    showMessage('Export Failed', 'No records to export or error occurred.');
+                }
+            } catch (error) {
+                showMessage('Export Failed', 'Unable to export data. ' + error.message);
+            }
+        }
+        
+        function convertToCSV(records) {
+            const headers = ['ID', 'Student ID', 'Student Name', 'Date', 'Time In', 'Time Out'];
+            const rows = records.map(r => [r.id, r.student_id, r.student_name, r.date, r.time_in, r.time_out]);
+            
+            const csvContent = [
+                headers.join(','),
+                ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+            ].join('\n');
+            
+            return csvContent;
+        }
+        
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+        
+        // Initialize
+        updateCurrentTime();
+        fetchAttendance();
+        primeSessionDefaults();
+        loadSessionsSelect();
+        setInterval(updateCurrentTime, 1000);
+        setInterval(fetchAttendance, REFRESH_INTERVAL);
+        
+        console.log('[*] Face Recognition Attendance System - Control Panel');
+        console.log('API URL: ' + API_BASE_URL);
+        console.log('Auto-refresh: ' + (REFRESH_INTERVAL / 1000) + 's');
+    </script>
+</body>
+</html>
